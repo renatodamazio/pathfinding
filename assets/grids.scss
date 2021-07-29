@@ -15,6 +15,18 @@
             background-color: #000 !important;
         }
 
+        &.wall-cell {
+            background-color: purple !important;
+        }
+
+        &.close-cell {
+            background-color: green !important;
+        }
+
+        &.open-cell {
+            background-color: orange !important;
+        }
+
         &.path-cell {
             background-color: red !important;
         }

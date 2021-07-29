@@ -11,6 +11,7 @@ const gridStyle = {
 }
 
 const gridMatrix = [];
+const gridElementMatrix = [];
 
 function handleCellClick() {
     console.log('do somenting')
@@ -27,26 +28,40 @@ function createCells() {
     return cell;
 }
 
-const createGrid = () => {
+export const createGridElements = () => {
+    for (var x = 0; x < rows; x++) {
+        gridElementMatrix[x] = [];
+
+        for (var y = 0; y < cols; y++) {
+            gridElementMatrix[x][y] = new createCells();
+        }
+    }
+
+    return gridElementMatrix;
+};
+
+export const createGrid = () => {
     for (var x = 0; x < rows; x++) {
         gridMatrix[x] = [];
 
         for (var y = 0; y < cols; y++) {
-            gridMatrix[x][y] = new createCells();
+            gridMatrix[x][y] = {};
         }
     }
 
     return gridMatrix;
 };
 
-export const returnGrids =  () => { return gridMatrix };
+export const returnElementGrids =  () => { return gridElementMatrix };
+
+export const returnMatrixGrids =  () => { return gridMatrix };
 
 export const returnMatrix = () => { return { rows, cols, wrapperStyle } };
 
 export const drawGrid = () => {
     const wrapper = document.getElementById("wrapper_grid");
     const style = wrapperStyle;
-    const grids = createGrid();
+    const grids = createGridElements();
 
     wrapper.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
 

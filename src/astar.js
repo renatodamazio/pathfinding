@@ -1,9 +1,8 @@
 "use strict";
 
-import { returnMatrix } from "./grids";
+import { returnMatrix, returnElementGrids } from "./grids";
 
 let openSet = new Array();
-
 
 const lowestFScore = (arr) => {
     return arr.reduce((prev, curr) => { return prev.f < curr.f ? prev : curr })
@@ -11,34 +10,35 @@ const lowestFScore = (arr) => {
 
 function removeFromArray(arr, item) {
     const index = arr.indexOf(item);
-    console.log(index);
     arr.splice(index, 1);
 };
 
 const heuristic = (num1, num2) => {
-    const a = num1.cell;
-    const b = num2.cell;
+    const a = num1;
+    const b = num2;
 
     const _math = Math.abs(a.i - b.i) + Math.abs(a.j - a.j);
     return _math;
 }
 
-function Setup(grids) {
+function Setup(params) {
+    let grids = params;
     const config = returnMatrix();
     let cols = config.cols;
+    
     let rows = config.rows;
 
     let startCell;
     let targetCell;
 
-    const cells = function(i, j) {
+    const data = function(i, j) {
         this.i = i;
         this.j = j;
         this.g = 0;
         this.h = 0;
-        this.fate = false;
         this.f = i + j;
         this.wall = false;
+        this.className = false;
         this.neighbors = [];
 
         if (Math.random(1) < 0.3) {
@@ -81,17 +81,19 @@ function Setup(grids) {
             //     this.neighbors.push(grids[i + 1][j + 1]);
             // }
         }
-    }
+    };
+
+
 
     grids.forEach((row, x) => {
         row.forEach((col, y) => {
-            grids[x][y].cell = new cells(x, y);
+            grids[x][y] = new data(x, y)
         })
     });
 
     grids.forEach((row, x) => {
         row.forEach((col, y) => {
-            grids[x][y].cell.setNeighbors(x, y);
+            grids[x][y].setNeighbors(x, y);
         })
     });
 
@@ -99,14 +101,12 @@ function Setup(grids) {
     startCell = (grids[0][0]);
     targetCell = (grids[3][2]);
 
-    startCell.classList.add("start-cell");
-    targetCell.classList.add("target-cell");
+    startCell.className = ("start-cell");
+    targetCell.className = ("target-cell");
 
-    // openSet =;
+    openSet.push(startCell);
 
-    console.log(openSet.length);
-
-    AStar({openSet, targetCell, startCell})
+    AStar({ openSet, targetCell, startCell }) 
 }
 
 function AStar({ openSet, targetCell, startCell }) {
@@ -114,23 +114,25 @@ function AStar({ openSet, targetCell, startCell }) {
     let closeSet = [];
     let path = [];
 
-    const reconstructPath = () => {
-        let x = 0;
-        
-        const startPath = setInterval(() => {
-            if (x <= path.length -1) {
-                x++
-            } else {
-                clearInterval(startPath)
-            }
+    const reconstructPath = () => {   
+       const elements = (returnElementGrids());
 
-            if (path[x]) {
-                path[x].classList.add("path-cell");
-            } else {
-                clearInterval(startPath);
-            }
-        }, 100)
-       
+        path.forEach((item, i) => {
+            elements[item.i][item.j].classList.add("path-cell");
+        });
+
+        closeSet.forEach((item, i) => {
+           if(item.wall) {
+            elements[item.i][item.j].classList.add("wall-cell");
+           } else {
+            elements[item.i][item.j].classList.add("close-cell");
+           }
+
+        });
+
+        openSet.forEach((item, i) => {
+            elements[item.i][item.j].classList.add("open-cell");
+        })
     }
     
     const constructPath = () => {        
@@ -150,30 +152,28 @@ function AStar({ openSet, targetCell, startCell }) {
                 return;
             }
 
-            const neighbors = current.cell.neighbors;
+            const neighbors = current.neighbors;
 
             removeFromArray(openSet, current);
 
             closeSet.push(current);
 
             for (var n = 0; n < neighbors.length; n++) {  
-                const neighborCell = neighbors[n].cell;
                 const neighbor = neighbors[n];
 
-
-                if (neighborCell.wall) {
-                    neighbor.style.backgroundColor = "purple";
+                if (neighbor.wall) {
+                    neighbor.className = "wall";
                 }
 
 
-                if (!closeSet.includes(neighbor) && !neighborCell.wall) {
+                if (!closeSet.includes(neighbor) && !neighbor.wall) {
 
-                    let tempg = (current.cell.g + 1);
+                    let tempg = (current.g + 1);
                     let newPath = false;
 
                     if (openSet.includes(neighbor)) {
 
-                        if (tempg < neighborCell.g) {
+                        if (tempg < neighbor.g) {
                             neighbor.g = tempg;
                             newPath = true;
                         }
@@ -193,11 +193,11 @@ function AStar({ openSet, targetCell, startCell }) {
             
             }
             for (var o = 0; o < openSet.length; o++) {
-                openSet[o].style.backgroundColor = "green"
+                // openSet[o].style.backgroundColor = "green"
             }
         
             for (var o = 0; o < closeSet.length; o++) {
-                closeSet[o].style.backgroundColor = "pink"
+                // closeSet[o].style.backgroundColor = "pink"
             }
 
             constructPath();
