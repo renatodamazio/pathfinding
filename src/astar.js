@@ -11,7 +11,6 @@ const lowestFScore = (arr) => {
 
 function removeFromArray(arr, item) {
     const index = arr.indexOf(item);
-    console.log(index);
     arr.splice(index, 1);
 };
 
@@ -21,10 +20,36 @@ const heuristic = (num1, num2) => {
 
     const _math = Math.abs(a.i - b.i) + Math.abs(a.j - a.j);
     return _math;
-}
+};
+
+function MazeBuilder(el, grids) {
+    const cell = el.cell;
+    const neighbors = cell.neighbors;
+
+    cell.visited = true;
+
+    if (cell.target) {
+        return;
+    }
+
+    if (neighbors.length) {
+        const notVisitedNeighbors = neighbors.filter((n) => !n.cell.visited);
+        const neighborIndex = Math.floor((Math.random() * notVisitedNeighbors.length));
+        const neighbor = notVisitedNeighbors[neighborIndex];
+
+        if(neighbor) {
+            neighbor.cell.wall = true;
+            neighbor.style.backgroundColor = "#fff";
+
+            notVisitedNeighbors.forEach((element) => MazeBuilder(element, grids));
+        }
+    }
+};
+
 
 function Setup(grids) {
     const config = returnMatrix();
+
     let cols = config.cols;
     let rows = config.rows;
 
@@ -36,13 +61,17 @@ function Setup(grids) {
         this.j = j;
         this.g = 0;
         this.h = 0;
-        this.fate = false;
+        this.visited = false;
+        this.start = false;
+        this.target = false;
         this.f = i + j;
         this.wall = false;
         this.neighbors = [];
-
-        if (Math.random(1) < 0.3) {
-            this.wall = true;
+        
+        this.generateWall = function() {
+            if ( Math.random(i+j) < 0.3) {
+                // this.wall = true;
+            }
         }
         
         this.setNeighbors = function() {
@@ -95,21 +124,33 @@ function Setup(grids) {
         })
     });
 
+    grids[0][0].cell.start = true;
+    grids[cols -1][rows -1].cell.target = true;
 
     startCell = (grids[0][0]);
-    targetCell = (grids[3][2]);
+    targetCell = (grids[cols -1][rows -1]);
 
     startCell.classList.add("start-cell");
     targetCell.classList.add("target-cell");
+    
 
-    // openSet =;
+    openSet.push(startCell);
 
-    console.log(openSet.length);
+    grids.forEach((row, x) => {
+        row.forEach((col, y) => {
+            const gridexpecetion = grids[x][y].cell
+            if (!gridexpecetion.start && !gridexpecetion.target) {
+                gridexpecetion.generateWall();
+            }
+        })
+    });
 
-    AStar({openSet, targetCell, startCell})
+    MazeBuilder(startCell, grids);
+    
+    AStar({ openSet, targetCell });
 }
 
-function AStar({ openSet, targetCell, startCell }) {
+function AStar({ openSet, targetCell }) {
     let current;
     let closeSet = [];
     let path = [];

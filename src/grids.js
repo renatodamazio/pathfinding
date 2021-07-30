@@ -1,8 +1,8 @@
 const rows = 16;
 const cols = 16;
 const wrapperStyle = {
-    width: 800,
-    height: 400,
+    width: 900,
+    height: 800,
 };
 
 const gridStyle = {

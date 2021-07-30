@@ -1,12 +1,11 @@
 #wrapper_grid {
-    border: 1px solid #000;
 
     .cell {
         outline: 1px solid #000;
         display: inline-block;
         vertical-align: top;
         transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
-
+        background-color: purple;
         &.start-cell {
             background-color: #000 !important;
         }
