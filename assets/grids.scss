@@ -1,11 +1,19 @@
 #wrapper_grid {
     margin: 0 auto;
+    
     .cell {
         outline: 1px solid #673ab7;
         display: inline-block;
         vertical-align: top;
-        transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
         background-color: #673ab7;
+
+        &.handle {
+            cursor: grab;
+        }
+
+        &.wall-cell {
+            background-color: #311b92 !important;
+        }
 
         &.start-cell {
             background-color: greenyellow !important;
@@ -15,7 +23,20 @@
             background-color: #000 !important;
         }
 
+        &.openset-cell {
+            background-color: #1e88e5;
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
+
+        }
+
+        &.closeset-cell {
+            background-color: #42a5f5;
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
+
+        }
+
         &.path-cell:not(.target-cell) {
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
             background: #fff !important;
             outline-color: #e3f2fd !important;
             animation-name: move;

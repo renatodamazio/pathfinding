@@ -24,6 +24,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0"
+    "babel-polyfill": "^6.26.0",
+    "sortablejs": "^1.14.0"
   }
 }

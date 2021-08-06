@@ -1,9 +1,19 @@
 "use strict";
 
-import { returnMatrix } from "./grids";
+import { returnGrids, returnMatrix, updateCells } from "./grids";
 
 let openSet = new Array();
 
+let startCell;
+let targetCell;
+
+let buildPath;
+
+let current;
+let closeSet = [];
+let path = [];
+
+let globalGrids = [];
 
 const lowestFScore = (arr) => {
     return arr.reduce((prev, curr) => { return prev.f < curr.f ? prev : curr })
@@ -48,13 +58,13 @@ function MazeBuilder(el, grids) {
 
                 if (j % 2 === 0 || notVisitedNeighbors.length > 2) {
                     neighbor.cell.wall = true;
-                    neighbor.style.backgroundColor = "#311b92"
+                    neighbor.classList.add("wall-cell")
                 };
 
 
                 if ( Math.floor(Math.random() * i + j) % 2 > i) {
                     neighbor.cell.wall = true;
-                    neighbor.style.backgroundColor = "#311b92"
+                    neighbor.classList.add("wall-cell")
                 };
 
                 notVisitedNeighbors.forEach((element) => MazeBuilder(element, grids));
@@ -67,16 +77,11 @@ function MazeBuilder(el, grids) {
 };
 
 
-function Setup(grids) {
+function cells(i, j) {
     const config = returnMatrix();
-
     let cols = config.cols;
     let rows = config.rows;
-
-    let startCell;
-    let targetCell;
-
-    const cells = function(i, j) {
+    let grids = globalGrids;
         this.i = i;
         this.j = j;
         this.g = 0;
@@ -108,7 +113,6 @@ function Setup(grids) {
                 this.neighbors.push(grids[i][j - 1]);
             }
 
-            
             // if (j > 0 && i > 0) {
             //     this.neighbors.push(grids[i - 1][j-1]);
             // }
@@ -125,66 +129,74 @@ function Setup(grids) {
             //     this.neighbors.push(grids[i + 1][j + 1]);
             // }
         }
-    }
+}
 
-    grids.forEach((row, x) => {
-        row.forEach((col, y) => {
-            grids[x][y].cell = new cells(x, y);
-        })
-    });
-
+function applyNeighborstoCells() {
+    const grids = globalGrids;
     grids.forEach((row, x) => {
         row.forEach((col, y) => {
             grids[x][y].cell.setNeighbors(x, y);
         })
     });
+}
+
+function applyCellsConfigToGridCell() {
+    const grids = globalGrids;
+    grids.forEach((row, x) => {
+        row.forEach((col, y) => {
+            grids[x][y].cell = new cells(x, y);
+        })
+    });
+}
+
+function Setup(grids) {
+    globalGrids = grids;
+
+    applyCellsConfigToGridCell();
+
+    applyNeighborstoCells();
 
     const returnRandomCell = () => {
-        const randomPosX = Math.abs(Math.floor(Math.random() * (0 - grids.length)) + 0);
-        const randomPosY = Math.abs(Math.floor(Math.random() * (0 - grids.length)) + 0);
+        const randomPosX = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length)) + 0);
+        const randomPosY = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length)) + 0);
 
-        return (grids[randomPosX][randomPosY]);
+        return (globalGrids[randomPosX][randomPosY]);
     };
 
     targetCell = returnRandomCell();
     startCell = returnRandomCell();
+
     startCell.cell.start = true;
     targetCell.cell.target = true;
 
-    startCell.classList.add("start-cell");
-    targetCell.classList.add("target-cell");
+    startCell.classList.add("start-cell", "handle");
+    targetCell.classList.add("target-cell", "handle");
 
     openSet.push(startCell);
 
 
     MazeBuilder(startCell, grids);
     
-    AStar({ openSet, targetCell });
+    // AStar({ openSet, targetCell });
 }
 
-function AStar({ openSet, targetCell }) {
-    let current;
-    let closeSet = [];
-    let path = [];
-
-    
+function AStar({ openSet, targetCell }) {    
     const reconstructPath = () => {
         let x = 0;
         
-        const startPath = setInterval(() => {
+        buildPath = setInterval(() => {
             if (x < path.length -1) {
                 x++
             } else {
-                clearInterval(startPath)
+                clearInterval(buildPath)
             }
 
             if (path[x]) {
                 path[x].classList.add("path-cell");
             } else {
-                clearInterval(startPath);
+                clearInterval(buildPath);
             }
         }, 100)
-       
     }
     
     const constructPath = () => {        
@@ -242,11 +254,11 @@ function AStar({ openSet, targetCell }) {
             
             }
             for (var o = 0; o < openSet.length; o++) {
-                openSet[o].style.backgroundColor = "#1e88e5"
+                openSet[o].classList.add("openset-cell");
             }
         
             for (var o = 0; o < closeSet.length; o++) {
-                closeSet[o].style.backgroundColor = "#42a5f5"
+                closeSet[o].classList.add("closeset-cell");
             }
 
             constructPath();
@@ -256,6 +268,51 @@ function AStar({ openSet, targetCell }) {
     }
     
     constructPath();
+}
+
+export function resetAstar() {
+    clearInterval(buildPath);
+
+    openSet = [];
+    startCell = [];
+    targetCell = [];
+    buildPath = [];
+    current = [];
+    closeSet = [];
+    path = [];
+
+    document.querySelectorAll(".openset-cell").forEach((item) => item.classList.remove("openset-cell"));
+    document.querySelectorAll(".closeset-cell").forEach((item) => item.classList.remove("closeset-cell"))
+    document.querySelectorAll(".path-cell").forEach((item) => item.classList.remove("path-cell"))
+
+    return true;
+}
+
+export function updateWallCell() {
+    globalGrids.forEach((globalGrid) => {
+        globalGrid.forEach((grid) => {
+            if (grid.classList.contains("wall-cell")) {
+                grid.cell.wall = true;
+            }
+        })
+    })
+}
+
+export function restartAStar() {
+    resetAstar();
+
+    globalGrids = updateCells();
+
+    applyCellsConfigToGridCell();
+    applyNeighborstoCells();
+    
+    const targetCell = document.querySelectorAll(".target-cell")[0];
+    const startCell = document.querySelectorAll(".start-cell")[0];
+
+    updateWallCell();
+
+    openSet.push(startCell);
+    AStar({openSet, targetCell})
 }
 
 export default Setup;
