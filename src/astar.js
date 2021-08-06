@@ -15,11 +15,15 @@ function removeFromArray(arr, item) {
 };
 
 const heuristic = (num1, num2) => {
-    const a = num1.cell;
-    const b = num2.cell;
+    const e = num1.cell;
+    const n = num2.cell;
 
-    const _math = Math.abs(a.i - b.i) + Math.abs(a.j - a.j);
-    return _math;
+    const a = e.i - n.i;
+    const b =  e.j - n.j;
+        
+    const c = Math.sqrt(a*a, + b*b);
+
+    return c;
 };
 
 function MazeBuilder(el, grids) {
@@ -33,15 +37,31 @@ function MazeBuilder(el, grids) {
     }
 
     if (neighbors.length) {
-        const notVisitedNeighbors = neighbors.filter((n) => !n.cell.visited);
-        const neighborIndex = Math.floor((Math.random() * notVisitedNeighbors.length));
-        const neighbor = notVisitedNeighbors[neighborIndex];
+        try {
+            const notVisitedNeighbors = neighbors.filter((n) => !n.cell.visited);
+            const neighborIndex = Math.floor((Math.random() * notVisitedNeighbors.length));
+            const neighbor = notVisitedNeighbors[neighborIndex];
 
-        if(neighbor) {
-            neighbor.cell.wall = true;
-            neighbor.style.backgroundColor = "#fff";
+            if(neighbor && (!neighbor.cell.start && !neighbor.cell.target)) {
+                const j = neighbor.cell.j;
+                const i = neighbor.cell.i;
 
-            notVisitedNeighbors.forEach((element) => MazeBuilder(element, grids));
+                if (j % 2 === 0 || notVisitedNeighbors.length > 2) {
+                    neighbor.cell.wall = true;
+                    neighbor.style.backgroundColor = "#311b92"
+                };
+
+
+                if ( Math.floor(Math.random() * i + j) % 2 > i) {
+                    neighbor.cell.wall = true;
+                    neighbor.style.backgroundColor = "#311b92"
+                };
+
+                notVisitedNeighbors.forEach((element) => MazeBuilder(element, grids));
+
+            }
+        } catch(err) {
+            console.log("Something went wrong");
         }
     }
 };
@@ -68,12 +88,6 @@ function Setup(grids) {
         this.wall = false;
         this.neighbors = [];
         
-        this.generateWall = function() {
-            if ( Math.random(i+j) < 0.3) {
-                // this.wall = true;
-            }
-        }
-        
         this.setNeighbors = function() {
             let i = this.i;
             let j = this.j;
@@ -94,6 +108,7 @@ function Setup(grids) {
                 this.neighbors.push(grids[i][j - 1]);
             }
 
+            
             // if (j > 0 && i > 0) {
             //     this.neighbors.push(grids[i - 1][j-1]);
             // }
@@ -124,26 +139,23 @@ function Setup(grids) {
         })
     });
 
-    grids[0][0].cell.start = true;
-    grids[cols -1][rows -1].cell.target = true;
+    const returnRandomCell = () => {
+        const randomPosX = Math.abs(Math.floor(Math.random() * (0 - grids.length)) + 0);
+        const randomPosY = Math.abs(Math.floor(Math.random() * (0 - grids.length)) + 0);
 
-    startCell = (grids[0][0]);
-    targetCell = (grids[cols -1][rows -1]);
+        return (grids[randomPosX][randomPosY]);
+    };
+
+    targetCell = returnRandomCell();
+    startCell = returnRandomCell();
+    startCell.cell.start = true;
+    targetCell.cell.target = true;
 
     startCell.classList.add("start-cell");
     targetCell.classList.add("target-cell");
-    
 
     openSet.push(startCell);
 
-    grids.forEach((row, x) => {
-        row.forEach((col, y) => {
-            const gridexpecetion = grids[x][y].cell
-            if (!gridexpecetion.start && !gridexpecetion.target) {
-                gridexpecetion.generateWall();
-            }
-        })
-    });
 
     MazeBuilder(startCell, grids);
     
@@ -155,11 +167,12 @@ function AStar({ openSet, targetCell }) {
     let closeSet = [];
     let path = [];
 
+    
     const reconstructPath = () => {
         let x = 0;
         
         const startPath = setInterval(() => {
-            if (x <= path.length -1) {
+            if (x < path.length -1) {
                 x++
             } else {
                 clearInterval(startPath)
@@ -181,13 +194,14 @@ function AStar({ openSet, targetCell }) {
 
             if (current == targetCell) {
                 let temp = current;
-                path.push(temp);
+                path.unshift(temp);
 
                 while(temp.previous) {
-                    path.push(temp.previous);
+                    path.unshift(temp.previous);
                     temp = temp.previous;
-                    reconstructPath();
                 }
+
+                reconstructPath();
                 return;
             }
 
@@ -200,12 +214,6 @@ function AStar({ openSet, targetCell }) {
             for (var n = 0; n < neighbors.length; n++) {  
                 const neighborCell = neighbors[n].cell;
                 const neighbor = neighbors[n];
-
-
-                if (neighborCell.wall) {
-                    neighbor.style.backgroundColor = "purple";
-                }
-
 
                 if (!closeSet.includes(neighbor) && !neighborCell.wall) {
 
@@ -234,11 +242,11 @@ function AStar({ openSet, targetCell }) {
             
             }
             for (var o = 0; o < openSet.length; o++) {
-                openSet[o].style.backgroundColor = "green"
+                openSet[o].style.backgroundColor = "#1e88e5"
             }
         
             for (var o = 0; o < closeSet.length; o++) {
-                closeSet[o].style.backgroundColor = "pink"
+                closeSet[o].style.backgroundColor = "#42a5f5"
             }
 
             constructPath();

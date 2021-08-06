@@ -1,21 +1,37 @@
 #wrapper_grid {
-
+    margin: 0 auto;
     .cell {
-        outline: 1px solid #000;
+        outline: 1px solid #673ab7;
         display: inline-block;
         vertical-align: top;
         transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
-        background-color: purple;
+        background-color: #673ab7;
+
         &.start-cell {
-            background-color: #000 !important;
+            background-color: greenyellow !important;
         }
 
         &.target-cell {
             background-color: #000 !important;
         }
 
-        &.path-cell {
-            background-color: red !important;
+        &.path-cell:not(.target-cell) {
+            background: #fff !important;
+            outline-color: #e3f2fd !important;
+            animation-name: move;
+            animation-duration: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;;
         }
+    }
+}
+
+@keyframes move {
+    0% {
+        transform: scale(1.4);
+    }
+    50% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
     }
 }

@@ -1,8 +1,8 @@
-const rows = 16;
-const cols = 16;
+const rows = 50;
+const cols = 50;
 const wrapperStyle = {
-    width: 900,
-    height: 800,
+    width: 1280,
+    height: 900,
 };
 
 const gridStyle = {
@@ -21,7 +21,7 @@ function createCells() {
     const style = gridStyle;
 
     cell.setAttribute("class", "cell");
-    cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`)
+    cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
     cell.addEventListener("click", function() { handleCellClick() })
 
     return cell;
