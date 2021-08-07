@@ -26,7 +26,8 @@
 
         &::after{
             border-radius: 100%;
-            transform:  translate(-50%, -50%) scale(0.8)
+            transform:  translate(-50%, -50%) scale(0.8);
+            background-color: greenyellow;;
         }
 
         &.handle {
@@ -69,6 +70,7 @@
         }
 
         &.wall-cell:not(.start-cell, .target-cell) {
+            cursor: pointer;
             transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
             outline:  rgb(39, 39, 39);
 

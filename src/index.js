@@ -19,11 +19,7 @@ window.onload = () => {
         draggable: ".cell",
         filter: ".wall-cell",
         animation: 150,
-        ghostClass: 'blue-background-class',
-
-        onEnd: (e) => {
-            // Start(e) 
-        }
+        ghostClass: 'blue-background-class'
     });
 
 

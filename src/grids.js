@@ -16,22 +16,27 @@ const gridStyle = {
 const gridMatrix = [];
 let cellPress = false;
 
-function convertCellinWall(ev) {
+function convertCellinWall(ev) {    
     if (cellPress) {
         const grid = ev.target;
+        toggleCellWall(grid);
+    }
+}
 
-        if (grid.cell.target || grid.cell.start) return;
+function toggleCellWall(grid) {
+    if (grid.cell.target || grid.cell.start) return;
 
-        if (grid.cell.wall) {
+    if (grid.cell.wall) {
+        
+        grid.cell.wall = false;
+        grid.classList.remove("wall-cell");
 
-            grid.cell.wall = false;
-            grid.classList.remove("wall-cell")
-        } else {
+    } else {
 
-            grid.cell.wall = true;
-            grid.classList.add("wall-cell")
+        grid.classList.remove("openset-cell", "closeset-cell", "path-cell");
+        grid.cell.wall = true;
+        grid.classList.add("wall-cell")
 
-        }
     }
 }
 
@@ -41,20 +46,35 @@ function handleCellClick(ev) {
 
     if (!handle) {
         cellPress = true;
-        cell.onmouseover = convertCellinWall;
+        wrapperGrid.onmouseover = convertCellinWall;
     }
 }
+
+wrapperGrid.addEventListener("mousedown", function(ev) {
+    handleCellClick(ev) 
+})
+
+wrapperGrid.addEventListener("mouseup", function(ev) {
+    cellPress = false;
+})
+
+document.onmouseup = () => cellPress = false;
 
 function createCells() {
     const cell = document.createElement("div");
     const style = gridStyle;
 
     cell.setAttribute("class", "cell");
+    
     cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
-    cell.addEventListener("mousedown", function(ev) { handleCellClick(ev) })
-    cell.addEventListener("mouseover", function(ev) { convertCellinWall(ev) })
-    cell.addEventListener("click", function(ev) { convertCellinWall(ev) })
-    cell.addEventListener("mouseup", function(ev) {if (cellPress) cellPress = false })
+    
+    cell.addEventListener("mouseup", function() { 
+        cellPress = false 
+    })
+    
+    cell.addEventListener("click", function(ev) { 
+        toggleCellWall(ev.target) 
+    })
 
     return cell;
 }
