@@ -190,7 +190,7 @@ const reconstructPath = () => {
         } else {
             clearInterval(buildPath);
         }
-    }, x)
+    }, x * 100)
 }
 
 function AStar({ openSet, targetCell }) {    
