@@ -6,13 +6,21 @@
         display: inline-block;
         vertical-align: top;
         background-color: #673ab7;
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            width: 0%;
+            height: 0%;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .5s;
+        }
 
         &.handle {
             cursor: grab;
-        }
-
-        &.wall-cell {
-            background-color: #311b92 !important;
         }
 
         &.start-cell {
@@ -24,31 +32,51 @@
         }
 
         &.openset-cell {
-            background-color: #1e88e5;
+            background-color: #ad29fa;
             transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
-
+           
         }
 
-        &.closeset-cell {
+        &.closeset-cell:not(.start-cell) {
             background-color: #42a5f5;
             transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
 
+            &::before {
+                background-color: #3a3cb7;
+                width: 100%;
+                height: 100%;
+                transition-delay: .12ms;
+            }
         }
 
         &.path-cell:not(.target-cell) {
-            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
-            background: #fff !important;
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
+            background: #fff;
             outline-color: #e3f2fd !important;
             animation-name: move;
-            animation-duration: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;;
+            animation-duration: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
+
+            &::before {
+                background-color: #fff;
+            }
+        }
+
+        &.wall-cell {
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
+            &::before {
+                background-color: #311b92 !important;
+                width: 100%;
+                height: 100%;
+            }
         }
     }
 }
 
 @keyframes move {
     0% {
-        transform: scale(1.4);
+        transform: scale(1.4);  
     }
+
     50% {
         transform: scale(0.9);
     }

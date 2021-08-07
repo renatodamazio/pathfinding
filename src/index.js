@@ -1,7 +1,7 @@
 import '../assets/main.scss';
 import('babel-polyfill');
 import drawGrid, { returnGrids } from './grids';
-import Setup, {restartAStar} from './astar';
+import Setup, { Start, cleanWalls, generateWalls } from './astar';
 import Sortable from 'sortablejs';
 
 window.onload = () => {
@@ -10,7 +10,8 @@ window.onload = () => {
     async function getGrids() {
         const grids = await returnGrids();
         Setup(grids);
-    }
+    };
+
     getGrids();
 
     Sortable.create(wrapper_grid, {
@@ -21,7 +22,26 @@ window.onload = () => {
         ghostClass: 'blue-background-class',
 
         onEnd: (e) => {
-            restartAStar(e)
+            Start(e)
         }
+    });
+
+
+   const buttonStart = document.getElementById("button-start");
+   const buttonCleanWalls = document.getElementById("button-clean-walls");
+   const buttonGenerateWalls = document.getElementById("button-generate-walls");
+
+
+   buttonStart.addEventListener("click", () => { 
+        const startCell = document.querySelectorAll(".start-cell");
+        Start(startCell[0]);
+    });
+
+    buttonCleanWalls.addEventListener("click", () => { 
+        cleanWalls();
     })
+
+    buttonGenerateWalls.addEventListener("click", () => { 
+        generateWalls();
+    })    
 }

@@ -8,12 +8,13 @@ let startCell;
 let targetCell;
 
 let buildPath;
-
 let current;
 let closeSet = [];
 let path = [];
-
+let intervalOpenSet;
 let globalGrids = [];
+
+let visitedAllFindPath = [0, 0]
 
 const lowestFScore = (arr) => {
     return arr.reduce((prev, curr) => { return prev.f < curr.f ? prev : curr })
@@ -53,6 +54,7 @@ function MazeBuilder(el, grids) {
             const neighbor = notVisitedNeighbors[neighborIndex];
 
             if(neighbor && (!neighbor.cell.start && !neighbor.cell.target)) {
+
                 const j = neighbor.cell.j;
                 const i = neighbor.cell.i;
 
@@ -176,30 +178,43 @@ function Setup(grids) {
 
 
     MazeBuilder(startCell, grids);
-    
-    // AStar({ openSet, targetCell });
+}
+
+
+function runVisitedPaths(arr, className) {
+    for (var o = 0; o < arr.length; o++) {
+        if (arr[o]) {
+            if (!arr[o].cell.start && !arr[o].cell.target) {
+                arr[o].style.transitionDelay = `.${o}s`;
+                arr[o].classList.add(className)
+            }
+        }
+    }
+}
+
+const reconstructPath = () => {
+    let x = 0;
+
+    buildPath = setInterval(() => {
+        if (x < path.length -1) {
+            x++
+        } else {
+            clearInterval(buildPath)
+        }
+
+        if (path[x]) {
+            path[x].style.transitionDelay = `${x}s`;
+            path[x].classList.add("path-cell");
+        } else {
+            clearInterval(buildPath);
+        }
+    }, 160)
 }
 
 function AStar({ openSet, targetCell }) {    
-    const reconstructPath = () => {
-        let x = 0;
-        
-        buildPath = setInterval(() => {
-            if (x < path.length -1) {
-                x++
-            } else {
-                clearInterval(buildPath)
-            }
 
-            if (path[x]) {
-                path[x].classList.add("path-cell");
-            } else {
-                clearInterval(buildPath);
-            }
-        }, 100)
-    }
     
-    const constructPath = () => {        
+    const constructPath = async () => {        
         if (openSet.length) {
             
             current = (lowestFScore(openSet));
@@ -212,7 +227,6 @@ function AStar({ openSet, targetCell }) {
                     path.unshift(temp.previous);
                     temp = temp.previous;
                 }
-
                 reconstructPath();
                 return;
             }
@@ -250,24 +264,37 @@ function AStar({ openSet, targetCell }) {
                         neighbor.f = neighbor.g + neighbor.h;
                         neighbor.previous = current;
                     }
+
+                    // constructOpenSetPath();
+                    // constructClosesetPath();
                 }
             
             }
-            for (var o = 0; o < openSet.length; o++) {
-                openSet[o].classList.add("openset-cell");
-            }
-        
-            for (var o = 0; o < closeSet.length; o++) {
-                closeSet[o].classList.add("closeset-cell");
-            }
+
+                runVisitedPaths(openSet, "openset-cell");
+                runVisitedPaths(closeSet, "closeset-cell");
 
             constructPath();
+
         } else {
             console.log("nenhum caminho encontrado");
         }
     }
     
     constructPath();
+}
+
+function cleanCell () {
+    document.querySelectorAll(".cell").forEach((grid) => {
+        grid.style.transitionDelay = '0s';
+        grid.classList.remove("openset-cell")
+        grid.classList.remove("closeset-cell")
+        grid.classList.remove("path-cell");
+        grid.classList.remove("wall-cell");
+
+        grid.cell.visited = false;
+        grid.cell.wall = false;
+    })
 }
 
 export function resetAstar() {
@@ -281,7 +308,8 @@ export function resetAstar() {
     closeSet = [];
     path = [];
 
-    document.querySelectorAll(".openset-cell").forEach((item) => item.classList.remove("openset-cell"));
+
+    document.querySelectorAll(".openset-cell").forEach((item) =>  item.classList.remove("openset-cell"));
     document.querySelectorAll(".closeset-cell").forEach((item) => item.classList.remove("closeset-cell"))
     document.querySelectorAll(".path-cell").forEach((item) => item.classList.remove("path-cell"))
 
@@ -291,14 +319,30 @@ export function resetAstar() {
 export function updateWallCell() {
     globalGrids.forEach((globalGrid) => {
         globalGrid.forEach((grid) => {
-            if (grid.classList.contains("wall-cell")) {
+            if (grid.classList.contains("wall-cell") && (!grid.cell.start || !grid.cell.target)) {
                 grid.cell.wall = true;
             }
         })
     })
 }
 
-export function restartAStar() {
+export function cleanWalls() {
+    cleanCell();
+    // const walls = document.querySelectorAll(".wall-cell");
+    // walls.forEach((wall) => { wall.classList.remove("wall-cell"); wall.cell.wall = false; })
+}
+
+export function generateWalls() {
+    cleanCell();
+    const config = returnMatrix();
+    const i = Math.floor(Math.random() * config.rows);
+    const j = Math.floor(Math.random() * config.cols);
+
+    const el = globalGrids[i][j];
+    return MazeBuilder(el, returnGrids())
+}
+
+export function Start() {
     resetAstar();
 
     globalGrids = updateCells();

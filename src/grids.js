@@ -12,13 +12,19 @@ const gridStyle = {
 
 const gridMatrix = [];
 let cellPress = false;
+
 function convertCellinWall(ev) {
     if (cellPress) {
         const grid = ev.target;
+
+        if (grid.cell.target || grid.cell.start) return;
+
         if (grid.cell.wall) {
+
             grid.cell.wall = false;
             grid.classList.remove("wall-cell")
         } else {
+
             grid.cell.wall = true;
             grid.classList.add("wall-cell")
 
