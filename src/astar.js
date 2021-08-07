@@ -167,7 +167,7 @@ function runVisitedPaths(arr, className) {
     for (var o = 0; o < arr.length; o++) {
         if (arr[o]) {
             if (!arr[o].cell.start && !arr[o].cell.target) {
-                arr[o].style.transitionDelay = `.${o}s`;
+                arr[o].style.transitionDelay = `.${o * 2}s`;
                 arr[o].classList.add(className)
             }
         }
@@ -190,7 +190,7 @@ const reconstructPath = () => {
         } else {
             clearInterval(buildPath);
         }
-    }, x * 100)
+    }, x * 100 / 2)
 }
 
 function AStar({ openSet, targetCell }) {    
@@ -267,7 +267,8 @@ function AStar({ openSet, targetCell }) {
 }
 
 function cleanCell () {
-    clearInterval(buildPath)
+    clearInterval(buildPath);
+
     document.querySelectorAll(".cell").forEach((grid) => {
         grid.style.transitionDelay = '0s';
         grid.classList.remove("openset-cell")
@@ -313,15 +314,23 @@ export function cleanWalls() {
     cleanCell();
 }
 
+export function setCellasTargetandStart() {
+    document.querySelectorAll(".start-cell")[0].cell.start = true;
+    document.querySelectorAll(".target-cell")[0].cell.target = true;
+}
+
 export function generateWalls() {
     cleanCell();
+
     const config = returnMatrix();
     const i = Math.floor(Math.random() * config.rows);
     const j = Math.floor(Math.random() * config.cols);
 
+    setCellasTargetandStart();
+
     const el = globalGrids[i][j];
     return MazeBuilder(el, returnGrids())
-}
+};
 
 export function Start() {
     resetAstar();
@@ -330,6 +339,8 @@ export function Start() {
 
     applyCellsConfigToGridCell();
     applyNeighborstoCells();
+
+    setCellasTargetandStart();
     
     const targetCell = document.querySelectorAll(".target-cell")[0];
     const startCell = document.querySelectorAll(".start-cell")[0];
