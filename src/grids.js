@@ -68,7 +68,19 @@ function createCells() {
     cell.setAttribute("class", "cell");
 
     cell.addEventListener("dragover", (event) => allowDrop(event));
-    cell.addEventListener("drop", (event) => drop(event))
+    cell.addEventListener("drop", (event) => {
+        const props = (drop(event));
+        const grid = (props.path[0]);
+        const oldGridStart = document.querySelectorAll(".start-cell")[0];
+
+        oldGridStart.classList.remove("start-cell", "wall-cell", "path-cell", "openset-cell", "closeset-cell");
+        oldGridStart.cell.start = false;
+
+        grid.cell.start = true;
+        grid.cell.wall = false;
+
+        grid.classList.add("start-cell");
+    })
 
     
     cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
