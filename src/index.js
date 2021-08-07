@@ -22,7 +22,7 @@ window.onload = () => {
         ghostClass: 'blue-background-class',
 
         onEnd: (e) => {
-            Start(e)
+            // Start(e) 
         }
     });
 

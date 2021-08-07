@@ -11,10 +11,8 @@ let buildPath;
 let current;
 let closeSet = [];
 let path = [];
-let intervalOpenSet;
 let globalGrids = [];
 
-let visitedAllFindPath = [0, 0]
 
 const lowestFScore = (arr) => {
     return arr.reduce((prev, curr) => { return prev.f < curr.f ? prev : curr })
@@ -114,22 +112,6 @@ function cells(i, j) {
             if (j > 0) {
                 this.neighbors.push(grids[i][j - 1]);
             }
-
-            // if (j > 0 && i > 0) {
-            //     this.neighbors.push(grids[i - 1][j-1]);
-            // }
-
-            // if (j > 0 && i < cols - 1) {
-            //     this.neighbors.push(grids[i + 1][j-1]);
-            // }
-
-            // if (j < rows - 1 && i > 0) {
-            //     this.neighbors.push(grids[i - 1][j + 1]);
-            // }
-
-            // if (i < cols - 1 && j < rows - 1) {
-            //     this.neighbors.push(grids[i + 1][j + 1]);
-            // }
         }
 }
 
@@ -208,7 +190,7 @@ const reconstructPath = () => {
         } else {
             clearInterval(buildPath);
         }
-    }, 160)
+    }, x)
 }
 
 function AStar({ openSet, targetCell }) {    
@@ -285,6 +267,7 @@ function AStar({ openSet, targetCell }) {
 }
 
 function cleanCell () {
+    clearInterval(buildPath)
     document.querySelectorAll(".cell").forEach((grid) => {
         grid.style.transitionDelay = '0s';
         grid.classList.remove("openset-cell")
@@ -328,8 +311,6 @@ export function updateWallCell() {
 
 export function cleanWalls() {
     cleanCell();
-    // const walls = document.querySelectorAll(".wall-cell");
-    // walls.forEach((wall) => { wall.classList.remove("wall-cell"); wall.cell.wall = false; })
 }
 
 export function generateWalls() {

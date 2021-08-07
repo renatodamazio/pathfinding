@@ -1,8 +1,11 @@
-const rows = 20;
-const cols = 20;
+const rows = 32;
+const cols = 32;
+const wrapperGrid = document.getElementById("wrapper_grid");
+
+
 const wrapperStyle = {
-    width: 800,
-    height: 600,
+    width: 1200, 
+    height: 900,
 };
 
 const gridStyle = {

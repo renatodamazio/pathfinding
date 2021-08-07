@@ -1,14 +1,18 @@
 #wrapper_grid {
     margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
     
     .cell {
-        outline: 1px solid #673ab7;
+        outline: 1px solid rgb(208, 232, 255);
         display: inline-block;
         vertical-align: top;
-        background-color: #673ab7;
+        background-color: #fff;
         position: relative;
 
-        &::before {
+        &::before,
+        &::after  {
             content: "";
             position: absolute;
             width: 0%;
@@ -16,11 +20,63 @@
             transform: translate(-50%, -50%);
             left: 50%;
             top: 50%;
+            border-radius: 0%;
             transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .5s;
+        }
+
+        &::after{
+            border-radius: 100%;
+            transform:  translate(-50%, -50%) scale(0.8)
         }
 
         &.handle {
             cursor: grab;
+        }
+
+        &.openset-cell {
+            background-color: #b9dff8;
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
+        }
+
+        &.closeset-cell:not(.start-cell, .path-cell) {
+            background-color: #90cafa;
+            outline-color: #90cafa;
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
+
+            &::before {
+                background-color: #4acff0;
+                width: 100%;
+                height: 100%;
+                transition-delay: .12ms;
+                border-radius: 0% !important;
+            }
+        }
+
+        &.path-cell:not(.target-cell) {
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
+            outline-color: rgb(61, 141, 247) !important;
+            animation-name: move;
+
+            &::after {
+                content: "";
+                width: 100%;
+                height: 100%;
+                border-radius: 0%;
+                transform: scale(1) translate(-50%, -50%);
+                position: absolute;
+                background-color: rgb(0, 102, 235);
+            }
+        }
+
+        &.wall-cell:not(.start-cell, .target-cell) {
+            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
+            outline:  rgb(39, 39, 39);
+
+            &::before {
+                background-color: rgb(39, 39, 39) !important;
+                width: 100%;
+                height: 100%;
+            }
         }
 
         &.start-cell {
@@ -28,47 +84,9 @@
         }
 
         &.target-cell {
-            background-color: #000 !important;
+            background-color: rgb(238, 9, 9) !important;
         }
 
-        &.openset-cell {
-            background-color: #ad29fa;
-            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
-           
-        }
-
-        &.closeset-cell:not(.start-cell) {
-            background-color: #42a5f5;
-            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
-
-            &::before {
-                background-color: #3a3cb7;
-                width: 100%;
-                height: 100%;
-                transition-delay: .12ms;
-            }
-        }
-
-        &.path-cell:not(.target-cell) {
-            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
-            background: #fff;
-            outline-color: #e3f2fd !important;
-            animation-name: move;
-            animation-duration: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
-
-            &::before {
-                background-color: #fff;
-            }
-        }
-
-        &.wall-cell {
-            transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
-            &::before {
-                background-color: #311b92 !important;
-                width: 100%;
-                height: 100%;
-            }
-        }
     }
 }
 
