@@ -1,7 +1,8 @@
+import { allowDrop, drag, drop } from "./draggable";
+
 const rows = 32;
 const cols = 32;
 const wrapperGrid = document.getElementById("wrapper_grid");
-
 
 const wrapperStyle = {
     width: 1200, 
@@ -65,6 +66,10 @@ function createCells() {
     const style = gridStyle;
 
     cell.setAttribute("class", "cell");
+
+    cell.addEventListener("dragover", (event) => allowDrop(event));
+    cell.addEventListener("drop", (event) => drop(event))
+
     
     cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
     
@@ -127,6 +132,15 @@ export const drawGrid = () => {
         }
     }
 
+    const point = document.createElement("div");
+    point.setAttribute("class", "point handle");
+    point.setAttribute("id", "point");
+    point.setAttribute("draggable", true);
+    point.setAttribute("style", `width: ${gridStyle.width}px; height: ${gridStyle.height}px`);
+
+    point.addEventListener("dragstart", (event) => drag(event));
+
+    wrapper.appendChild(point);
 }
 
 
