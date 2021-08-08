@@ -279,7 +279,7 @@ function cleanCell () {
         grid.previous = false;
         grid.cell.visited = false;
         grid.cell.wall = false;
-    })
+    });
 }
 
 async function cleanCellConfig() {

@@ -11,11 +11,15 @@ export function drag(ev) {
 }
 
 export function drop(ev) {
-    ev.preventDefault();
-    var data = ev.dataTransfer.getData("text");
-    ev.target.innerHTML = "";
-    ev.target.appendChild(document.getElementById(data));
+    try {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        ev.target.innerHTML = "";
+        ev.target.appendChild(document.getElementById(data));
 
-    return ev;
+        return ev;
+    } catch(err) {
+        throw err
+    }
 }
 
