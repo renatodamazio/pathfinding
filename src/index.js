@@ -1,7 +1,7 @@
 import '../assets/main.scss';
 import('babel-polyfill');
 import drawGrid, { returnGrids, pinPoints } from './grids';
-import Setup, { Start, cleanWalls, generateWalls } from './astar';
+import Setup, { APathFinding, cleanWalls, generateWalls } from './astar';
 
 window.onload = () => {
     drawGrid();
@@ -19,9 +19,8 @@ window.onload = () => {
    const buttonCleanWalls = document.getElementById("button-clean-walls");
    const buttonGenerateWalls = document.getElementById("button-generate-walls");
 
-
    buttonStart.addEventListener("click", () => { 
-        Start();
+        APathFinding();
     });
 
     buttonCleanWalls.addEventListener("click", () => { 

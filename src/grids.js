@@ -1,4 +1,5 @@
 import { allowDrop, drag, drop } from "./draggable";
+import { APathFinding } from './astar';
 
 const rows = 32;
 const cols = 32;
@@ -96,6 +97,12 @@ function createCells() {
         grid.cell.visited = false;
 
         grid.classList.add(`${classProp}`);
+        
+        const paths = document.querySelectorAll(".path-cell");
+
+        if (paths.length) {
+            APathFinding();
+        }
     });
     
     cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);

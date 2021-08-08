@@ -10,7 +10,6 @@ let buildPath;
 let current;
 let closeSet = [];
 let path = [];
-let times = 0;
 let globalGrids = [];
 
 const lowestFScore = (arr) => {
@@ -196,20 +195,12 @@ function AStar({ openSet, targetCell }) {
 
             if (current == targetCell) {
 
-                times = 0;
-
                 let temp = current;
                 path.unshift(temp);
 
                 while(temp.previous) {
                     path.unshift(temp.previous);
                     temp = temp.previous;
-
-                    if (times >= closeSet.length) {
-                        break;
-                    }
-                    times++;
-
                 };
 
 
@@ -342,7 +333,7 @@ export function generateWalls() {
     return MazeBuilder(el, returnGrids())
 };
 
-export async function Start() {    
+export async function APathFinding() {    
     await resetAstar();
 
     globalGrids = await updateCells();
