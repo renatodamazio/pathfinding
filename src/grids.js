@@ -25,7 +25,8 @@ function convertCellinWall(ev) {
 }
 
 function toggleCellWall(grid) {
-    if (grid.cell.target || grid.cell.start) return;
+    if (!grid.cell) return;
+    if ((grid.cell) && grid.cell.target || grid.cell.start) return;
 
     if (grid.cell.wall) {
         
@@ -78,6 +79,7 @@ function createCells() {
         grid.classList.remove("start-cell", "wall-cell", "path-cell", "openset-cell", "closeset-cell");
 
         oldGridStart.cell.start = false;
+        grid.cell.visited = false;
 
         grid.cell.start = true;
         grid.cell.wall = false;
@@ -85,18 +87,17 @@ function createCells() {
 
         grid.classList.add("start-cell");
 
-    })
-
+    });
     
     cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
     
     cell.addEventListener("mouseup", function() { 
         cellPress = false 
-    })
+    });
     
     cell.addEventListener("click", function(ev) { 
         toggleCellWall(ev.target) 
-    })
+    });
 
     return cell;
 }
