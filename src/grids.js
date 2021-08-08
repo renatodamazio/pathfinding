@@ -1,19 +1,12 @@
 import { allowDrop, drag, drop } from "./draggable";
 import { APathFinding } from './astar';
 
-const rows = 32;
-const cols = 32;
+const rows = 43;
+const cols = 43;
 const wrapperGrid = document.getElementById("wrapper_grid");
 
-const wrapperStyle = {
-    width: 1200, 
-    height: 900,
-};
-
-const gridStyle = {
-    width: wrapperStyle.width / rows,
-    height:  wrapperStyle.height / cols
-}
+let wrapperStyle = {};
+let gridStyle = {};
 
 const gridMatrix = [];
 let cellPress = false;
@@ -23,6 +16,16 @@ function convertCellinWall(ev) {
         const grid = ev.target;
         toggleCellWall(grid);
     }
+}
+
+function setupSizes() {
+    const wrapper = document.getElementById("wrapper_grid");
+
+    wrapperStyle.width = wrapper.offsetWidth, 
+    wrapperStyle.height = wrapper.offsetHeight,
+    
+    gridStyle.width = wrapperStyle.width / rows,
+    gridStyle.height = wrapperStyle.height / cols
 }
 
 function toggleCellWall(grid) {
@@ -136,6 +139,7 @@ export function updateCells() {
 };
 
 const createGrid = () => {
+    
     for (var x = 0; x < rows; x++) {
         gridMatrix[x] = [];
 
@@ -147,7 +151,6 @@ const createGrid = () => {
     return gridMatrix;
 };
 
-createGrid();
 
 export const returnGrids =  () => { return gridMatrix };
 
@@ -166,6 +169,10 @@ const createPoints = (className, id, ) => {
 }
 
 export const drawGrid = () => {
+    setupSizes();
+
+    createGrid();
+
     const wrapper = document.getElementById("wrapper_grid");
     const style = wrapperStyle;
     const grids = gridMatrix;
