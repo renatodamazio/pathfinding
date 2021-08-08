@@ -145,8 +145,8 @@ function Setup(grids) {
         return (globalGrids[randomPosX][randomPosY]);
     };
 
-    targetCell = returnRandomCell();
     startCell = returnRandomCell();
+    targetCell = returnRandomCell();
 
     startCell.cell.start = true;
     targetCell.cell.target = true;
