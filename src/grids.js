@@ -73,20 +73,29 @@ function createCells() {
     cell.addEventListener("drop", (event) => {
         const props = (drop(event));
         const grid = (props.path[0]);
-        const oldGridStart = document.querySelectorAll(".start-cell")[0];
+        const classProp = grid.children[0].id;
 
-        oldGridStart.classList.remove("start-cell", "wall-cell", "path-cell", "openset-cell", "closeset-cell");
-        grid.classList.remove("start-cell", "wall-cell", "path-cell", "openset-cell", "closeset-cell");
+        const oldGridStart = document.querySelectorAll(`.${classProp}`)[0];
 
-        oldGridStart.cell.start = false;
+        if (oldGridStart) {
+            oldGridStart.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
+            oldGridStart.cell.start = false;
+        }
+
+        grid.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
+
         grid.cell.visited = false;
 
-        grid.cell.start = true;
+        if (classProp == "start-cell") {
+            grid.cell.start = true;
+        } else {
+            grid.cell.target = true;
+        }
+        
         grid.cell.wall = false;
         grid.cell.visited = false;
 
-        grid.classList.add("start-cell");
-
+        grid.classList.add(`${classProp}`);
     });
     
     cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
@@ -96,7 +105,7 @@ function createCells() {
     });
     
     cell.addEventListener("click", function(ev) { 
-        toggleCellWall(ev.target) 
+        toggleCellWall(ev.target);
     });
 
     return cell;
@@ -137,6 +146,18 @@ export const returnGrids =  () => { return gridMatrix };
 
 export const returnMatrix = () => { return { rows, cols, wrapperStyle } };
 
+const createPoints = (className, id, ) => {
+    const point = document.createElement("div");
+    point.setAttribute("class", className);
+    point.setAttribute("id", id);
+    point.setAttribute("draggable", true);
+    point.setAttribute("style", `width: ${gridStyle.width}px; height: ${gridStyle.height}px`);
+
+    point.addEventListener("dragstart", (event) => drag(event));
+
+    return point;
+}
+
 export const drawGrid = () => {
     const wrapper = document.getElementById("wrapper_grid");
     const style = wrapperStyle;
@@ -150,15 +171,11 @@ export const drawGrid = () => {
         }
     }
 
-    const point = document.createElement("div");
-    point.setAttribute("class", "point handle");
-    point.setAttribute("id", "point");
-    point.setAttribute("draggable", true);
-    point.setAttribute("style", `width: ${gridStyle.width}px; height: ${gridStyle.height}px`);
+    const pointStart = createPoints("point-start handle ", "start-cell")
+    const pontTarget = createPoints("point-target handle ", "target-cell")
 
-    point.addEventListener("dragstart", (event) => drag(event));
-
-    wrapper.appendChild(point);
+    wrapper.appendChild(pointStart);
+    wrapper.appendChild(pontTarget);
 }
 
 
