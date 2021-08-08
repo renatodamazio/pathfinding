@@ -180,7 +180,6 @@ export const pinPoints = () => {
 
     startCell[0].appendChild(pointStart);
     targetCell[0].appendChild(pontTarget);
-}
-
+};
 
 export default drawGrid;

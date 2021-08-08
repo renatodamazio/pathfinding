@@ -163,7 +163,6 @@ function runVisitedPaths(arr, className) {
     for (var o = 0; o < arr.length; o++) {
         if (arr[o]) {
             if (!arr[o].cell.start && !arr[o].cell.target) {
-                // arr[o].style.transitionDelay = `.${o * 2}s`;
                 arr[o].classList.add(className)
             }
         }
@@ -273,7 +272,6 @@ function cleanCell () {
     clearInterval(buildPath);
 
     document.querySelectorAll(".cell").forEach((grid) => {
-        // grid.style.transitionDelay = '0s';
         grid.classList.remove("openset-cell")
         grid.classList.remove("closeset-cell")
         grid.classList.remove("path-cell");
