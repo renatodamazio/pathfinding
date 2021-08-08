@@ -6,13 +6,11 @@ let openSet = new Array();
 
 let startCell;
 let targetCell;
-
 let buildPath;
 let current;
 let closeSet = [];
 let path = [];
 let globalGrids = [];
-
 
 const lowestFScore = (arr) => {
     return arr.reduce((prev, curr) => { return prev.f < curr.f ? prev : curr })
@@ -75,7 +73,6 @@ function MazeBuilder(el, grids) {
         }
     }
 };
-
 
 function cells(i, j) {
     const config = returnMatrix();
@@ -162,7 +159,6 @@ function Setup(grids) {
     MazeBuilder(startCell, grids);
 }
 
-
 function runVisitedPaths(arr, className) {
     for (var o = 0; o < arr.length; o++) {
         if (arr[o]) {
@@ -193,10 +189,8 @@ const reconstructPath = () => {
     }, x * 100 / 2)
 }
 
-function AStar({ openSet, targetCell }) {    
-
-    
-    const constructPath = async () => {        
+function AStar({ openSet, targetCell }) {
+    const constructPath = async () => {
         if (openSet.length) {
             
             current = (lowestFScore(openSet));
@@ -209,6 +203,7 @@ function AStar({ openSet, targetCell }) {
                     path.unshift(temp.previous);
                     temp = temp.previous;
                 }
+
                 reconstructPath();
                 return;
             }
@@ -246,15 +241,13 @@ function AStar({ openSet, targetCell }) {
                         neighbor.f = neighbor.g + neighbor.h;
                         neighbor.previous = current;
                     }
-
-                    // constructOpenSetPath();
-                    // constructClosesetPath();
+                } else {
+                    console.log("nenhum caminho viável.")
                 }
-            
-            }
+            }   
 
-                runVisitedPaths(openSet, "openset-cell");
-                runVisitedPaths(closeSet, "closeset-cell");
+            runVisitedPaths(openSet, "openset-cell");
+            runVisitedPaths(closeSet, "closeset-cell");
 
             constructPath();
 
@@ -332,23 +325,22 @@ export function generateWalls() {
     return MazeBuilder(el, returnGrids())
 };
 
-export function Start() {
+export async function Start() {
     resetAstar();
 
-    globalGrids = updateCells();
+    globalGrids = await updateCells();
 
     applyCellsConfigToGridCell();
     applyNeighborstoCells();
-
-    setCellasTargetandStart();
     
     const targetCell = document.querySelectorAll(".target-cell")[0];
     const startCell = document.querySelectorAll(".start-cell")[0];
 
     updateWallCell();
-
+   
     openSet.push(startCell);
-    AStar({openSet, targetCell})
+
+    AStar({ openSet, targetCell });
 }
 
 export default Setup;

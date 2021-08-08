@@ -19,8 +19,7 @@ window.onload = () => {
 
 
    buttonStart.addEventListener("click", () => { 
-        const startCell = document.querySelectorAll(".start-cell");
-        Start(startCell[0]);
+        Start();
     });
 
     buttonCleanWalls.addEventListener("click", () => { 
