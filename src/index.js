@@ -1,6 +1,6 @@
 import '../assets/main.scss';
 import('babel-polyfill');
-import drawGrid, { returnGrids } from './grids';
+import drawGrid, { returnGrids, pinPoints } from './grids';
 import Setup, { Start, cleanWalls, generateWalls } from './astar';
 
 window.onload = () => {
@@ -9,6 +9,8 @@ window.onload = () => {
     async function getGrids() {
         const grids = await returnGrids();
         Setup(grids);
+
+        pinPoints();
     };
 
     getGrids();

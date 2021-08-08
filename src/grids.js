@@ -170,12 +170,16 @@ export const drawGrid = () => {
             wrapper.appendChild(grids[x][y]);
         }
     }
+}
 
-    const pointStart = createPoints("point-start handle ", "start-cell")
-    const pontTarget = createPoints("point-target handle ", "target-cell")
+export const pinPoints = () => {
+    const startCell = document.querySelectorAll('.start-cell');
+    const targetCell = document.querySelectorAll(".target-cell");
+    const pointStart = createPoints("point-start handle ", "start-cell");
+    const pontTarget = createPoints("point-target handle ", "target-cell");
 
-    wrapper.appendChild(pointStart);
-    wrapper.appendChild(pontTarget);
+    startCell[0].appendChild(pointStart);
+    targetCell[0].appendChild(pontTarget);
 }
 
 
