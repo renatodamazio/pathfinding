@@ -138,8 +138,8 @@ function Setup(grids) {
     applyNeighborstoCells();
 
     const returnRandomCell = () => {
-        const randomPosX = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length)) + 0);
-        const randomPosY = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length)) + 0);
+        const randomPosX = Math.abs(Math.floor(Math.random() * globalGrids.length / 2));
+        const randomPosY = Math.abs(Math.floor(Math.random() * globalGrids.length / 2));
 
         return (globalGrids[randomPosX][randomPosY]);
     };

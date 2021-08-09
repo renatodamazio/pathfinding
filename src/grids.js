@@ -1,8 +1,8 @@
 import { allowDrop, drag, drop } from "./draggable";
 import { APathFinding } from './astar';
 
-const rows = 43;
-const cols = 43;
+let rows = 36;
+let cols = 18;
 const wrapperGrid = document.getElementById("wrapper_grid");
 
 let wrapperStyle = {};
@@ -19,10 +19,9 @@ function convertCellinWall(ev) {
 }
 
 function setupSizes() {
-    const wrapper = document.getElementById("wrapper_grid");
+    wrapperStyle.width = wrapperGrid.offsetWidth;
+    wrapperStyle.height = wrapperGrid.offsetHeight;
 
-    wrapperStyle.width = wrapper.offsetWidth, 
-    wrapperStyle.height = wrapper.offsetHeight,
     
     gridStyle.width = wrapperStyle.width / rows,
     gridStyle.height = wrapperStyle.height / cols

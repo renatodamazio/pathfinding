@@ -92,7 +92,7 @@
         &.wall-cell:not(.start-cell, .target-cell) {
             cursor: pointer;
             transition: cubic-bezier(0.445, 0.05, 0.55, 0.95) .50s;
-            outline:  rgb(39, 39, 39);
+
 
             &::before {
                 background-color: rgb(39, 39, 39) !important;
