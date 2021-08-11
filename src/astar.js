@@ -43,7 +43,7 @@ function MazeBuilder(el, grids) {
         return;
     }
 
-    if (neighbors.length) {
+    if (neighbors.length) {        
         try {
             const notVisitedNeighbors = neighbors.filter((n) => !n.cell.visited);
             const neighborIndex = Math.floor((Math.random() * notVisitedNeighbors.length));
@@ -69,7 +69,7 @@ function MazeBuilder(el, grids) {
 
             }
         } catch(err) {
-            console.log("Something went wrong");
+            console.log("Something went wrong", err);
         }
     }
 };
@@ -94,16 +94,23 @@ function cells(i, j) {
             let i = this.i;
             let j = this.j;
 
-            if (i < cols - 1) {
+            if (j < cols - 1) {
+                console.log(i, j);
+
                 this.neighbors.push(grids[i+1][j]);
             }
 
             if (i > 0) {
+
                 this.neighbors.push(grids[i-1][j]);
             }
 
             if (j < rows - 1) {
-                this.neighbors.push(grids[i][j+1]);
+                if (grids[i][j+1]) {
+                    this.neighbors.push(grids[i][j + 1]);
+                } else {
+                    console.log(grids, i, j );
+                }
             }
 
             if (j > 0) {
@@ -319,18 +326,26 @@ export function setCellasTargetandStart() {
     document.querySelectorAll(".target-cell")[0].cell.target = true;
 }
 
+function randomNumber(arr) {
+    return parseInt(Math.random() * arr.length -1)
+}
+
 export function generateWalls() {
     cleanCell();
 
-    const config = returnMatrix();
-    const i = Math.floor(Math.random() * config.rows);
-    const j = Math.floor(Math.random() * config.cols);
+    const firstGridIndex = randomNumber(globalGrids);
+    const grids = globalGrids[firstGridIndex];
+    const secondGridIndex = randomNumber(grids);
 
     setCellasTargetandStart();
 
-    const el = globalGrids[i][j];
+    const cell = grids[secondGridIndex];
 
-    return MazeBuilder(el, returnGrids())
+    if (!cell) {
+        return generateWalls();
+    }
+    
+    return MazeBuilder(cell, returnGrids())
 };
 
 export async function APathFinding() {    

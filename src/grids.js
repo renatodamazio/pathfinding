@@ -2,7 +2,8 @@ import { allowDrop, drag, drop } from "./draggable";
 import { APathFinding } from './astar';
 
 let rows = 36;
-let cols = 18;
+let cols = 36;
+
 const wrapperGrid = document.getElementById("wrapper_grid");
 
 let wrapperStyle = {};
@@ -11,20 +12,11 @@ let gridStyle = {};
 const gridMatrix = [];
 let cellPress = false;
 
-function convertCellinWall(ev) {    
+function convertCellinWall(ev) {
     if (cellPress) {
         const grid = ev.target;
         toggleCellWall(grid);
     }
-}
-
-function setupSizes() {
-    wrapperStyle.width = wrapperGrid.offsetWidth;
-    wrapperStyle.height = wrapperGrid.offsetHeight;
-
-    
-    gridStyle.width = wrapperStyle.width / rows,
-    gridStyle.height = wrapperStyle.height / cols
 }
 
 function toggleCellWall(grid) {
@@ -67,9 +59,10 @@ document.onmouseup = () => cellPress = false;
 
 function createCells() {
     const cell = document.createElement("div");
-    const style = gridStyle;
 
     cell.setAttribute("class", "cell");
+    cell.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;`;
+
 
     cell.addEventListener("dragover", (event) => allowDrop(event));
 
@@ -106,9 +99,7 @@ function createCells() {
             APathFinding();
         }
     });
-    
-    cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
-    
+        
     cell.addEventListener("mouseup", function() { 
         cellPress = false 
     });
@@ -138,6 +129,8 @@ export function updateCells() {
 };
 
 const createGrid = () => {
+    rows = Math.floor(wrapperGrid.offsetHeight - 160) / 25;
+    cols = Math.floor(wrapperGrid.offsetWidth / 25);
     
     for (var x = 0; x < rows; x++) {
         gridMatrix[x] = [];
@@ -167,8 +160,16 @@ const createPoints = (className, id, ) => {
     return point;
 }
 
+export const clearDiv = (id) => {
+    const cellWrapper = document.createElement("div");
+    cellWrapper.setAttribute("id", `wrapper-cell-${id}`);
+    cellWrapper.setAttribute("class", "wrapper-cell");
+
+    return cellWrapper;
+}
+
 export const drawGrid = () => {
-    setupSizes();
+    // setupSizes();
 
     createGrid();
 
@@ -176,11 +177,13 @@ export const drawGrid = () => {
     const style = wrapperStyle;
     const grids = gridMatrix;
 
-    wrapper.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
+    // wrapper.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
 
     for (var x = 0; x < rows; x++) {
+        wrapper.appendChild(clearDiv(x));
+
         for (var y = 0; y < cols; y++) {
-            wrapper.appendChild(grids[x][y]);
+            wrapper.querySelector(`#wrapper-cell-${x}`).appendChild(grids[x][y]);
         }
     }
 }
