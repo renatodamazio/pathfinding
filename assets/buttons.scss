@@ -10,6 +10,7 @@ button {
 
     &:hover {
         border-bottom-width: 4px;
+        transform: translateY(-3px);
     }
 
     &:active {
@@ -17,12 +18,13 @@ button {
     }
 
     &.primary {
-        border-color: rgb(1, 84, 192);
-        background-color: rgb(0, 102, 235);;
+        border-color: $path-cell;
+        background-color: $path-cell-dark;
         color: #fff;
 
         &:hover {
-            background: rgb(1, 103, 236);
+            background: $path-cell;
+            border-color: $path-cell-dark;
 
         }
     }

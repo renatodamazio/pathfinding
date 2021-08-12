@@ -1,0 +1,16 @@
+$point-start: hotpink;
+$point-target: rgb(150, 105, 255);
+$cell-outline: rgb(208, 232, 255);
+$green-yellow: greenyellow;
+$open-cell: #b9dff8;
+$close-cell: #90cafa;
+$close-cell-shine: #4acff0;
+$path-cell: rgb(61, 141, 247);
+$path-cell-dark: rgb(0, 102, 235);
+$wall-cell: rgb(39, 39, 39);
+$target-cell: rgb(238, 9, 9);
+
+//
+$transition-cell-cubic-bezier: cubic-bezier(0.445, 0.05, 0.55, 0.95) .5s;
+$transition-cell-after-bezier: all .5s cubic-bezier(0.680, -0.550, 0.265, 1.550);
+$open-set-cubic-bezier: cubic-bezier(0.445, 0.05, 0.55, 0.95) .500s;
