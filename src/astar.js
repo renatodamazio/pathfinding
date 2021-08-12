@@ -68,7 +68,7 @@ function cells(i, j) {
             this.neighbors.push(globalGrids[i][j - 1]);
         }
     }
-}
+};
 
 function applyNeighborstoCells() {
     globalGrids.forEach((row, x) => {
@@ -205,7 +205,7 @@ function AStar({ openSet, targetCell }) {
             runVisitedPaths(closeSet, "closeset-cell");
 
         } else {
-            alert("No path found!");
+            setTimeout(() => alert("No path found!"), 100);
         }
     }
     
@@ -251,7 +251,7 @@ export async function resetAstar() {
     await document.querySelectorAll(".path-cell").forEach((item) => item.classList.remove("path-cell"));
 
     return true;
-}
+};
 
 export function updateWallCell() {
     globalGrids.forEach((globalGrid) => {
@@ -261,12 +261,12 @@ export function updateWallCell() {
             }
         })
     })
-}
+};
 
 export function setCellasTargetandStart() {
     document.querySelectorAll(".start-cell")[0].cell.start = true;
     document.querySelectorAll(".target-cell")[0].cell.target = true;
-}
+};
 
 export function generateWalls() {
     cleanCell();
@@ -303,7 +303,7 @@ export async function APathFinding() {
     openSet.push(startCell);
 
     AStar({ openSet, targetCell });
-}
+};
 
 export default Setup;
 
