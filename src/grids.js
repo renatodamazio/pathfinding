@@ -168,8 +168,8 @@ export const createPoints = (className, id, ) => {
 export const pinPoints = () => {
     const startCell = document.querySelectorAll('.start-cell');
     const targetCell = document.querySelectorAll(".target-cell");
-    const pointStart = createPoints("point-start handle ", "start-cell");
-    const pontTarget = createPoints("point-target handle ", "target-cell");
+    const pointStart = createPoints("point-start handle drag-drop", "start-cell");
+    const pontTarget = createPoints("point-target handle drag-drop", "target-cell");
 
     startCell[0].appendChild(pointStart);
     targetCell[0].appendChild(pontTarget);

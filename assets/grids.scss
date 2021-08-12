@@ -5,6 +5,14 @@
     background-color: #fff;
     position: relative;
 
+    .drag-drop:hover {
+        background-image: url('../src/icons/drag-drop.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: move;
+    }
+
     .point-start {
         width: 50px;
         height: 50px;
@@ -12,7 +20,7 @@
         background-color: hotpink;
         top: 0;
         left: 0;
-    }
+    }   
 
     .point-target {
         width: 50px;
