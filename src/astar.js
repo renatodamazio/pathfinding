@@ -205,7 +205,7 @@ function AStar({ openSet, targetCell }) {
             runVisitedPaths(closeSet, "closeset-cell");
 
         } else {
-            setTimeout(() => alert("No path found!"), 100);
+            setTimeout(() => alert("No path found, Click in 'GENERATE WALLS'"), 100);
         }
     }
     
