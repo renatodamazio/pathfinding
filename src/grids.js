@@ -70,13 +70,12 @@ function handleDrop(event) {
     const props = (drop(event));
     const grid = (props.path[0]);
     const classProp = grid.children[0].id;
-
     const oldGridStart = document.querySelectorAll(`.${classProp}`)[0];
 
     if (oldGridStart) {
         oldGridStart.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
         oldGridStart.cell.start = false;
-    }
+    };
 
     grid.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
 
@@ -100,37 +99,28 @@ function handleDrop(event) {
     }
 }
 
-document.onmouseup = () => cellPress = false;
-
 function createCells() {
     const cell = document.createElement("div");
-    const style = gridStyle;
 
     cell.setAttribute("class", "cell");
 
     cell.addEventListener("dragover", (event) => allowDrop(event));
 
-    cell.addEventListener("drop", (event) => {
-       handleDrop(event);
-    });
+    cell.addEventListener("drop", (event) => handleDrop(event));
+        
+    cell.addEventListener("mouseup", () => cellPress = false );
     
-    cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
-    
-    cell.addEventListener("mouseup", function() { 
-        cellPress = false 
-    });
-    
-    cell.addEventListener("click", function(ev) { 
-        toggleCellWall(ev.target);
-    });
+    cell.addEventListener("click", (ev) => toggleCellWall(ev.target));
+
+    cell.setAttribute("style", `width: ${gridStyle.width}px; height: ${gridStyle.height}px`);
 
     return cell;
 }
 
 export function updateCells() {
-    var list = document.querySelectorAll(".cell");
-    var elementsPerSubArray = rows;
-    var matrix = [], i, k;
+    const list = document.querySelectorAll(".cell");
+    const elementsPerSubArray = rows;
+    let matrix = [], i, k;
 
     for (i = 0, k = -1; i < list.length; i++) {
         if (i % elementsPerSubArray === 0) {
@@ -158,12 +148,11 @@ const createGrid = () => {
     return gridMatrix;
 };
 
-
 export const returnGrids =  () => { return gridMatrix };
 
-export const returnMatrix = () => { return { rows, cols, wrapperStyle } };
+export const returnMatrix = () => { return { rows, cols, wrapperStyle }};
 
-const createPoints = (className, id, ) => {
+export const createPoints = (className, id, ) => {
     const point = document.createElement("div");
 
     point.setAttribute("class", className);
@@ -174,23 +163,7 @@ const createPoints = (className, id, ) => {
     point.addEventListener("dragstart", (event) => drag(event));
 
     return point;
-}
-
-export const drawGrid = () => {
-    createGrid();
-    
-    const wrapper = document.getElementById("wrapper_grid");
-    const style = wrapperStyle;
-    const grids = gridMatrix;
-
-    wrapper.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
-
-    for (var x = 0; x < rows; x++) {
-        for (var y = 0; y < cols; y++) {
-            wrapper.appendChild(grids[x][y]);
-        }
-    }
-}
+};
 
 export const pinPoints = () => {
     const startCell = document.querySelectorAll('.start-cell');
@@ -201,5 +174,19 @@ export const pinPoints = () => {
     startCell[0].appendChild(pointStart);
     targetCell[0].appendChild(pontTarget);
 };
+
+export const drawGrid = () => {
+    createGrid();
+    
+    const wrapper = document.getElementById("wrapper_grid");
+
+    wrapper.setAttribute("style", `width: ${wrapperStyle.width}px; height: ${wrapperStyle.height}px`);
+
+    for (var x = 0; x < rows; x++) {
+        for (var y = 0; y < cols; y++) {
+            wrapper.appendChild(gridMatrix[x][y]);
+        }
+    }
+}
 
 export default drawGrid;

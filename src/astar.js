@@ -1,9 +1,9 @@
 "use strict";
 
 import { returnGrids, returnMatrix, updateCells } from "./grids";
+import { MazeBuilder } from './maze';
 
-let openSet = new Array();
-
+let openSet = [];
 let startCell;
 let targetCell;
 let buildPath;
@@ -13,8 +13,8 @@ let path = [];
 let globalGrids = [];
 
 const lowestFScore = (arr) => {
-    return arr.reduce((prev, curr) => { return prev.f < curr.f ? prev : curr })
-}
+    return arr.reduce((prev, curr) => { return prev.f < curr.f ? prev : curr });
+};
 
 function removeFromArray(arr, item) {
     const index = arr.indexOf(item);
@@ -33,102 +33,65 @@ const heuristic = (num1, num2) => {
     return c;
 };
 
-function MazeBuilder(el, grids) {
-    const cell = el.cell;
-    const neighbors = cell.neighbors;
-
-    cell.visited = true;
-
-    if (cell.target) {
-        return;
-    }
-
-    if (neighbors.length) {
-        try {
-            const notVisitedNeighbors = neighbors.filter((n) => !n.cell.visited);
-            const neighborIndex = Math.floor((Math.random() * notVisitedNeighbors.length));
-            const neighbor = notVisitedNeighbors[neighborIndex];
-
-            if(neighbor && (!neighbor.cell.start && !neighbor.cell.target)) {
-
-                const j = neighbor.cell.j;
-                const i = neighbor.cell.i;
-
-                if (j % 2 === 0 || notVisitedNeighbors.length > 2) {
-                    neighbor.cell.wall = true;
-                    neighbor.classList.add("wall-cell")
-                };
-
-
-                if ( Math.floor(Math.random() * i + j) % 2 > i) {
-                    neighbor.cell.wall = true;
-                    neighbor.classList.add("wall-cell")
-                };
-
-                notVisitedNeighbors.forEach((element) => MazeBuilder(element, grids));
-
-            }
-        } catch(err) {
-            console.log("Something went wrong");
-        }
-    }
-};
-
 function cells(i, j) {
     const config = returnMatrix();
     let cols = config.cols;
     let rows = config.rows;
-    let grids = globalGrids;
-        this.i = i;
-        this.j = j;
-        this.g = 0;
-        this.h = 0;
-        this.visited = false;
-        this.start = false;
-        this.target = false;
-        this.f = i + j;
-        this.wall = false;
-        this.neighbors = [];
+    this.i = i;
+    this.j = j;
+    this.g = 0;
+    this.h = 0;
+    this.visited = false;
+    this.start = false;
+    this.target = false;
+    this.f = i + j;
+    this.wall = false;
+    this.neighbors = [];
         
-        this.setNeighbors = function() {
-            let i = this.i;
-            let j = this.j;
+    this.setNeighbors = function() {
+        let i = this.i;
+        let j = this.j;
 
-            if (i < cols - 1) {
-                this.neighbors.push(grids[i+1][j]);
-            }
-
-            if (i > 0) {
-                this.neighbors.push(grids[i-1][j]);
-            }
-
-            if (j < rows - 1) {
-                this.neighbors.push(grids[i][j+1]);
-            }
-
-            if (j > 0) {
-                this.neighbors.push(grids[i][j - 1]);
-            }
+        if (i < cols - 1) {
+            this.neighbors.push(globalGrids[i+1][j]);
         }
+
+        if (i > 0) {
+            this.neighbors.push(globalGrids[i-1][j]);
+        }
+
+        if (j < rows - 1) {
+            this.neighbors.push(globalGrids[i][j+1]);
+        }
+
+        if (j > 0) {
+            this.neighbors.push(globalGrids[i][j - 1]);
+        }
+    }
 }
 
 function applyNeighborstoCells() {
-    const grids = globalGrids;
-    grids.forEach((row, x) => {
+    globalGrids.forEach((row, x) => {
         row.forEach((col, y) => {
-            grids[x][y].cell.setNeighbors(x, y);
+            globalGrids[x][y].cell.setNeighbors(x, y);
         })
     });
 }
 
 function applyCellsConfigToGridCell() {
-    const grids = globalGrids;
-    grids.forEach((row, x) => {
+    globalGrids.forEach((row, x) => {
         row.forEach((col, y) => {
-            grids[x][y].cell = new cells(x, y);
+            globalGrids[x][y].cell = new cells(x, y);
         })
     });
 }
+
+const returnRandomCell = () => {
+    const randomPosX = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length / 2 )) + 0);
+    const randomPosY = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length / 2 )) + 0);
+
+    return (globalGrids[randomPosX][randomPosY]);
+};
 
 function Setup(grids) {
     globalGrids = grids;
@@ -136,13 +99,6 @@ function Setup(grids) {
     applyCellsConfigToGridCell();
 
     applyNeighborstoCells();
-
-    const returnRandomCell = () => {
-        const randomPosX = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length / 2 )) + 0);
-        const randomPosY = Math.abs(Math.floor(Math.random() * (0 - globalGrids.length / 2 )) + 0);
-
-        return (globalGrids[randomPosX][randomPosY]);
-    };
 
     startCell = returnRandomCell();
     targetCell = returnRandomCell();
@@ -156,7 +112,7 @@ function Setup(grids) {
     openSet.push(startCell);
 
     MazeBuilder(startCell, grids);
-}
+};
 
 function runVisitedPaths(arr, className) {
     for (var o = 0; o < arr.length; o++) {
@@ -166,7 +122,7 @@ function runVisitedPaths(arr, className) {
             }
         }
     }
-}
+};
 
 const reconstructPath = () => {
     let x = 0;
@@ -185,13 +141,15 @@ const reconstructPath = () => {
         } else {
             clearInterval(buildPath);
         }
-    }, x * 100 / 2)
+    }, x * 100 / 2);
 }
 
 function AStar({ openSet, targetCell }) {
     const constructPath = async () => {
         if (openSet.length) {
+
             current = lowestFScore(openSet);
+            const neighbors = current.cell.neighbors;
 
             if (current == targetCell) {
 
@@ -203,12 +161,9 @@ function AStar({ openSet, targetCell }) {
                     temp = temp.previous;
                 };
 
-
                 reconstructPath();
                 return;
             };
-
-            const neighbors = current.cell.neighbors;
 
             removeFromArray(openSet, current);
 
@@ -219,7 +174,6 @@ function AStar({ openSet, targetCell }) {
                 const neighbor = neighbors[n];
 
                 if (!closeSet.includes(neighbor) && !neighborCell.wall) {
-
                     let tempg = (current.cell.g + 1);
                     let newPath = false;
 
@@ -229,12 +183,12 @@ function AStar({ openSet, targetCell }) {
                             neighbor.g = tempg;
                             newPath = true;
                         }
+
                     } else {
                         newPath = true;
                         neighbor.g = tempg;
                         openSet.push(neighbor);
                     };
-
 
                     if (newPath) {
                         neighbor.h = heuristic(neighbor, targetCell);
@@ -250,16 +204,15 @@ function AStar({ openSet, targetCell }) {
             runVisitedPaths(openSet, "openset-cell");
             runVisitedPaths(closeSet, "closeset-cell");
 
-
         } else {
-            console.log("nenhum caminho encontrado");
+            alert("No path found!");
         }
     }
     
     constructPath();
 }
 
-function cleanCell () {
+export function cleanCell () {
     clearInterval(buildPath);
 
     document.querySelectorAll(".cell").forEach((grid) => {
@@ -294,8 +247,8 @@ export async function resetAstar() {
     path = [];
 
     await document.querySelectorAll(".openset-cell").forEach((item) =>  item.classList.remove("openset-cell"));
-    await document.querySelectorAll(".closeset-cell").forEach((item) => item.classList.remove("closeset-cell"))
-    await document.querySelectorAll(".path-cell").forEach((item) => item.classList.remove("path-cell"))
+    await document.querySelectorAll(".closeset-cell").forEach((item) => item.classList.remove("closeset-cell"));
+    await document.querySelectorAll(".path-cell").forEach((item) => item.classList.remove("path-cell"));
 
     return true;
 }
@@ -308,10 +261,6 @@ export function updateWallCell() {
             }
         })
     })
-}
-
-export function cleanWalls() {
-    cleanCell();
 }
 
 export function setCellasTargetandStart() {
@@ -330,7 +279,7 @@ export function generateWalls() {
 
     const el = globalGrids[i][j];
 
-    return MazeBuilder(el, returnGrids())
+    return MazeBuilder(el, returnGrids());
 };
 
 export async function APathFinding() {    
