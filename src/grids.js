@@ -1,22 +1,27 @@
 import { allowDrop, drag, drop } from "./draggable";
 import { APathFinding } from './astar';
 
-const rows = 32;
-const cols = 32;
+let rows = 32;
+let cols = 32;
 const wrapperGrid = document.getElementById("wrapper_grid");
 
-const wrapperStyle = {
-    width: 1200, 
-    height: 900,
-};
-
-const gridStyle = {
-    width: wrapperStyle.width / rows,
-    height:  wrapperStyle.height / cols
-}
+let wrapperStyle = {};
+let gridStyle = {};
 
 const gridMatrix = [];
 let cellPress = false;
+
+function setupSizes() {
+    wrapperStyle = {
+        width: wrapperGrid.offsetWidth - 20, 
+        height: wrapperGrid.offsetHeight - 80,
+    };
+
+    gridStyle = {
+        width: wrapperStyle.width / rows,
+        height:  wrapperStyle.height / cols
+    }
+}
 
 function convertCellinWall(ev) {    
     if (cellPress) {
@@ -38,7 +43,7 @@ function toggleCellWall(grid) {
 
         grid.classList.remove("openset-cell", "closeset-cell", "path-cell");
         grid.cell.wall = true;
-        grid.classList.add("wall-cell")
+        grid.classList.add("wall-cell");
 
     }
 }
@@ -61,6 +66,40 @@ wrapperGrid.addEventListener("mouseup", function(ev) {
     cellPress = false;
 })
 
+function handleDrop(event) {
+    const props = (drop(event));
+    const grid = (props.path[0]);
+    const classProp = grid.children[0].id;
+
+    const oldGridStart = document.querySelectorAll(`.${classProp}`)[0];
+
+    if (oldGridStart) {
+        oldGridStart.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
+        oldGridStart.cell.start = false;
+    }
+
+    grid.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
+
+    grid.cell.visited = false;
+
+    if (classProp == "start-cell") {
+        grid.cell.start = true;
+    } else {
+        grid.cell.target = true;
+    }
+    
+    grid.cell.wall = false;
+    grid.cell.visited = false;
+
+    grid.classList.add(`${classProp}`);
+    
+    const paths = document.querySelectorAll(".path-cell");
+
+    if (paths.length) {
+        APathFinding();
+    }
+}
+
 document.onmouseup = () => cellPress = false;
 
 function createCells() {
@@ -72,37 +111,7 @@ function createCells() {
     cell.addEventListener("dragover", (event) => allowDrop(event));
 
     cell.addEventListener("drop", (event) => {
-        const props = (drop(event));
-        const grid = (props.path[0]);
-        const classProp = grid.children[0].id;
-
-        const oldGridStart = document.querySelectorAll(`.${classProp}`)[0];
-
-        if (oldGridStart) {
-            oldGridStart.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
-            oldGridStart.cell.start = false;
-        }
-
-        grid.classList.remove(classProp, "wall-cell", "path-cell", "openset-cell", "closeset-cell");
-
-        grid.cell.visited = false;
-
-        if (classProp == "start-cell") {
-            grid.cell.start = true;
-        } else {
-            grid.cell.target = true;
-        }
-        
-        grid.cell.wall = false;
-        grid.cell.visited = false;
-
-        grid.classList.add(`${classProp}`);
-        
-        const paths = document.querySelectorAll(".path-cell");
-
-        if (paths.length) {
-            APathFinding();
-        }
+       handleDrop(event);
     });
     
     cell.setAttribute("style", `width: ${style.width}px; height: ${style.height}px`);
@@ -136,6 +145,8 @@ export function updateCells() {
 };
 
 const createGrid = () => {
+    setupSizes();
+
     for (var x = 0; x < rows; x++) {
         gridMatrix[x] = [];
 
@@ -147,7 +158,6 @@ const createGrid = () => {
     return gridMatrix;
 };
 
-createGrid();
 
 export const returnGrids =  () => { return gridMatrix };
 
@@ -155,6 +165,7 @@ export const returnMatrix = () => { return { rows, cols, wrapperStyle } };
 
 const createPoints = (className, id, ) => {
     const point = document.createElement("div");
+
     point.setAttribute("class", className);
     point.setAttribute("id", id);
     point.setAttribute("draggable", true);
@@ -166,6 +177,8 @@ const createPoints = (className, id, ) => {
 }
 
 export const drawGrid = () => {
+    createGrid();
+    
     const wrapper = document.getElementById("wrapper_grid");
     const style = wrapperStyle;
     const grids = gridMatrix;
